@@ -6,6 +6,7 @@ import numpy as np
 from scipy import stats
 import readrw, readmen, readSimLex, readWordSim
 import argparse
+from zipfile import ZipFile
 
 parser = argparse.ArgumentParser(description="Define which dataset for evaluation you would like to use")
 parser.add_argument('dataset', help = "options: rw, men, simlex, wordsim")
