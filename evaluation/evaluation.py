@@ -9,10 +9,10 @@ import argparse
 from zipfile import ZipFile
 import io
 
-parser = argparse.ArgumentParser(description="Define which dataset for evaluation you would like to use")
-parser.add_argument('dataset', help = "options: rw, men, simlex, wordsim")
-parser.add_argument('vectorsize', type=int, help = 'the size of the embeddings you want to use')
-parser.add_argument('type', help = "Type you want to use (nll, ste)")
+parser = argparse.ArgumentParser()
+parser.add_argument('dataset', help = "The dataset you would like to use for evaluation (rw, men, simlex, wordsim)")
+parser.add_argument('vectorsize', type=int, help = 'The size of the embeddings you want to use (128, 256, 512)')
+parser.add_argument('type', help = "Type of encoder that was used for creating binary embeddings (nll, ste)")
 args = parser.parse_args()
 
 # returns hamming distance. if one of the words is not found, -1 is returned
@@ -28,33 +28,12 @@ def getHamming(word1, word2):
 if __name__ == "__main__":
 
     lines = []
-    file_name = ''
-    txt_name = ''
-    if args.type == 'nll':
-        if args.vectorsize == 128:
-            file_name = "nll128.zip"
-            txt_name = "nll128.txt"
-        elif args.vectorsize == 256:
-            file_name = "nll256.zip"
-            txt_name = "nll256.txt"
-        elif args.vectorsize == 512:
-            file_name = "nll512.zip"
-            txt_name = "nll512.txt"
-    elif args.type == 'ste':
-        if args.vectorsize == 128:
-            file_name = "ste128.zip"
-            txt_name = "ste128.txt"
-        elif args.vectorsize == 256:
-            file_name = "ste256.zip"
-            txt_name = "ste256.txt"
-        elif args.vectorsize == 512:
-            file_name = "ste512.zip"
-            txt_name = "ste512.txt"
-    if file_name == '':
-        print('no good entries, try again')
-        quit()
-    with ZipFile(file_name) as zf:
-        with io.TextIOWrapper(zf.open(txt_name), encoding="utf-8") as f:
+
+    zipFileName = args.type + str(args.vectorsize) + '.zip'
+    txtName = args.type + str(args.vectorsize) + '.txt'
+
+    with ZipFile(zipFileName) as zf:
+        with io.TextIOWrapper(zf.open(txtName), encoding="utf-8") as f:
             lines = f.readlines()
     words = []
     embeddings: List[np.array] = []
@@ -89,6 +68,6 @@ if __name__ == "__main__":
             continue
 
         scores.append(wordpair[2])
-        distances.append(1 - distance/128)
+        distances.append(1 - distance/args.vectorsize)
 
     print(stats.spearmanr(scores, distances))
