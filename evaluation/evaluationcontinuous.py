@@ -10,12 +10,15 @@ from zipfile import ZipFile
 import io
 
 parser = argparse.ArgumentParser()
+
+# TODO: adding flags instead of the arguments index makes it more readable, see:
 parser.add_argument('dataset', help = "The dataset you would like to use for evaluation (rw, men, simlex, wordsim)")
 
 args = parser.parse_args()
 
 if __name__ == "__main__":
 
+    # TODO: Please make a small script that retrieves the embeddings and puts it in the correct file
     file = open("../glove.6b/glove.6B.300d.txt", encoding="utf8")
     lines = file.readlines()
     words = []
